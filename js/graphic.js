@@ -1,5 +1,7 @@
 var mobileThreshold = 300, //set to 500 for testing
     aspect_width = 4,
+    brewerClass = "OrRd",
+    colorRange = 9,
     aspect_height = 1;
 
 //standard margins
@@ -7,7 +9,7 @@ var margin = {
     top: 30,
     right: 30,
     bottom: 20,
-    left: 30
+    left: 50
 };
 //jquery shorthand
 var $graphic = $('#graphic');
@@ -52,7 +54,7 @@ function render(width) {
     ifMobile(width);
     //calculate height against container width
 
-    var width = 0.9 * width;
+    var width = width - margin.right - margin.left;
 
     var height = Math.ceil((width * aspect_height) / aspect_width) - margin.top - margin.bottom;
 
@@ -66,7 +68,7 @@ function render(width) {
 
     var color = d3.scale.quantize()
         .domain([0, 900])
-        .range(d3.range(9).map(function(d){ return "q" + d + "-9"; }));
+        .range(d3.range(colorRange).map(function(d){ return "q" + d + "-" + colorRange; }));
 
     //build an svg for each year
     var svg = d3.select("#graphic").selectAll("svg")
@@ -74,9 +76,9 @@ function render(width) {
             .enter().append("svg")
                 .attr("width",width)
                 .attr("height", height)
-                .attr("class", "OrRd")
+                .attr("class", brewerClass)
                 .append("g")
-                  .attr("transform", "translate(" + ((width - cellSize * 53) / 2) + "," + (height - cellSize * 7 -1) + ")");
+                  .attr("transform", "translate(" + ((width - cellSize * 53) / 2 + 10) + "," + (height - cellSize * 7 -1) + ")");
     //year labels
     svg.append("text")
         .attr("transform", "translate(-6," + cellSize * 4 + ")rotate(-90)")
@@ -116,7 +118,6 @@ function render(width) {
         .attr("y", -8)
         .text(month_name);
 
-
     d3.csv("ron.csv", function(error, csv){
         var data = d3.nest()
             .key(function(d) { return d.check_date;  })
@@ -143,9 +144,6 @@ function render(width) {
           + "H" + (w1 + 1) * cellSize + "V" + 0
           + "H" + (w0 + 1) * cellSize + "Z";
     }
-
-    //i dunno what this is
-    //d3.select(self.frameElement).style("height", "2910px");
 
 
 
