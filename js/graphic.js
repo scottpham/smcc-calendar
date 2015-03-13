@@ -1,13 +1,13 @@
 var mobileThreshold = 300, //set to 500 for testing
     aspect_width = 4,
-    brewerClass = "OrRd",
-    colorRange = 9,
+    brewerClass = "YlOrBr",
+    colorRange = 5,
     aspect_height = 1;
 
 //standard margins
 var margin = {
     top: 30,
-    right: 30,
+    right: 31,
     bottom: 20,
     left: 50
 };
@@ -52,8 +52,8 @@ function render(width) {
     } 
     //call mobile check
     ifMobile(width);
-    //calculate height against container width
 
+    //calculate height against container width
     var width = width - margin.right - margin.left;
 
     var height = Math.ceil((width * aspect_height) / aspect_width) - margin.top - margin.bottom;
@@ -68,7 +68,7 @@ function render(width) {
 
     var color = d3.scale.quantize()
         .domain([0, 900])
-        .range(d3.range(colorRange).map(function(d){ return "q" + d + "-" + colorRange; }));
+        .range(d3.range(colorRange + 1).map(function(d){ return "q" + (d + 1) + "-" + (colorRange) + " data"; }));
 
     //build an svg for each year
     var svg = d3.select("#graphic").selectAll("svg")
@@ -78,7 +78,7 @@ function render(width) {
                 .attr("height", height)
                 .attr("class", brewerClass)
                 .append("g")
-                  .attr("transform", "translate(" + ((width - cellSize * 53) / 2 + 10) + "," + (height - cellSize * 7 -1) + ")");
+                  .attr("transform", "translate(" + (margin.left - cellSize) + "," + (height - cellSize * 7 -1) + ")");
     //year labels
     svg.append("text")
         .attr("transform", "translate(-6," + cellSize * 4 + ")rotate(-90)")
@@ -130,7 +130,6 @@ function render(width) {
             .attr("class", function(d) { return "day " + color(data[d]); })
             .select("title")
             .text(function(d){ return d + ": " + (data[d]); });
-    
     }); //end of d3.csv
 
     //outline of months
