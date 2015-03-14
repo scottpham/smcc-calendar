@@ -94,7 +94,7 @@ function render(width) {
             .attr("height", cellSize)
             .attr("x", function(d){ return week(d) * cellSize; })
             .attr("y", function(d){ return day(d) * cellSize; })
-            .datum(format);
+            .datum(format); //built in tip?
 
     //year title
     rect.append("title")
@@ -107,8 +107,10 @@ function render(width) {
             .attr("class", "month")
             .attr("d", monthPath);
 
+    //d3 object for month names
     var month_name = d3.time.format("%B");
 
+    // add month names
     svg.selectAll("text.label")
         .data(function(d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
       .enter().append("text")
@@ -126,10 +128,20 @@ function render(width) {
 
         console.log(data);
 
+        tip = d3.tip().attr("class", "d3-tip").html(function(d){ return "Amount Spent: $" + data[d]; });
+
+        svg.call(tip);
+
         rect.filter(function(d){ return d in data; })
             .attr("class", function(d) { return "day " + color(data[d]); })
+            .on("mouseover", tip.show)
             .select("title")
-            .text(function(d){ return d + ": " + (data[d]); });
+            .text(function(d){ return d + ": " + (data[d]); 
+
+        // svg.selectAll(".day").on('mouseover', tip.show).on('mouseout', tip.hide);
+
+        });
+
     }); //end of d3.csv
 
     //outline of months
@@ -143,6 +155,8 @@ function render(width) {
           + "H" + (w1 + 1) * cellSize + "V" + 0
           + "H" + (w0 + 1) * cellSize + "Z";
     }
+
+   
 
 
 
